@@ -7,11 +7,15 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using Evaluation_Manager.Repositories;
+using Evaluation_Manager.Models;
 
 namespace Evaluation_Manager
 {
     public partial class FrmLogin : Form
     {
+        public static Teacher LoggedTeacher { get; private set; }
+
         public FrmLogin()
         {
             InitializeComponent();
@@ -27,7 +31,11 @@ namespace Evaluation_Manager
             string username = txtUsername.Text;
             string password = txtPassword.Text;
 
-            if(username == "teacher" && password == "test")
+            LoggedTeacher = TeacherRepository.GetTeacher(username);
+
+
+
+            if (LoggedTeacher != null && LoggedTeacher.CheckPassword(password))
             {
                 FrmStudents frmStudents = new FrmStudents();
                 Hide();
