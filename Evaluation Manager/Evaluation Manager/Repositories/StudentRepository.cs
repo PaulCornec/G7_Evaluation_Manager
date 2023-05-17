@@ -58,7 +58,5 @@ namespace Evaluation_Manager.Repositories
             };
             return student;
         }
-
-
     }
 }

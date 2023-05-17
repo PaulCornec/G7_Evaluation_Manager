@@ -1,11 +1,11 @@
-﻿using System;
+﻿using DBLayer;
+using Evaluation_Manager.Models;
+using System;
 using System.Collections.Generic;
+using System.Data.SqlClient;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Evaluation_Manager.Models;
-using System.Data.SqlClient;
-using DBLayer;
 
 namespace Evaluation_Manager.Repositories
 {
@@ -14,7 +14,8 @@ namespace Evaluation_Manager.Repositories
         public static Evaluation GetEvaluation(Student student, Activity activity)
         {
             Evaluation evaluation = null;
-            string sql = $"SELECT * FROM Evaluations" + $"WHERE IdStudents = {id}";
+            string sql = $"SELECT * FROM Evaluations" +
+                $" WHERE IdStudents = {student.Id} AND IdActivities = {activity.Id}";
             DB.OpenConnection();
             var reader = DB.GetDataReader(sql);
             if (reader.HasRows)
@@ -27,11 +28,21 @@ namespace Evaluation_Manager.Repositories
             return evaluation;
         }
 
-        private static Evaluation CreateObject(SqlDataReader reader)
+        private static Evaluation CreateObject(SqlDataReader dr)
         {
             return new Evaluation
             {
-                Activity = int.Parse(dr[""])
+                Activity = ActivityRepository.GetActivity(
+                    int.Parse(dr["IdActivities"].ToString())
+                ),
+                Student = StudentRepository.GetStudent(
+                    int.Parse(dr["IdStudents"].ToString())
+                ),
+                Evaluator = TeacherRepository.GetTeacher(
+                    int.Parse(dr["IdTeachers"].ToString())
+                ),
+                EvaluationDate = DateTime.Parse(dr["EvaluationDate"].ToString()),
+                Points = int.Parse(dr["Points"].ToString())
             };
         }
     }
